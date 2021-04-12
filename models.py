@@ -33,13 +33,32 @@ class User(db.Model):
                            default=datetime.now, onupdate=datetime.now)
     # profile = db.relationship('UserProfile')
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        """ 有效的用户才能登录系统 """
+        return self.status == constants.UserStatus.USER_ACTIVE.value
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return '{}'.format(self.id)
+
+    def __str__(self):
+        return self.nickname
+
 
 class UserProfile(db.Model):
     """ 用户详细信息 """
     __tablename__ = 'accounts_user_profile'
     id = db.Column(db.Integer, primary_key=True)  # 主键
     # 用户名，用于登录
-    username = db.Column(db.String(64), unique=True, nullable=False)
+    username = db.Column(db.String(64), nullable=False)
     # 用户真实姓名
     real_name = db.Column(db.String(64))
     # 用户的格言
